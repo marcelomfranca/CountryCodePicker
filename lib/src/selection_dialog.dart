@@ -92,16 +92,16 @@ class _SelectionDialogState extends State<SelectionDialog> {
             children: [
               Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: TextButton(
-                      // padding: const EdgeInsets.all(0),
-                      // iconSize: 20,
-                      // icon: widget.cancelIcon!,
-                      onPressed: widget.onCancel,
-                      child: Text(widget.cancelText, style: const TextStyle(fontSize: 16)),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 24),
+                  //   child: TextButton(
+                  //     // padding: const EdgeInsets.all(0),
+                  //     // iconSize: 20,
+                  //     // icon: widget.cancelIcon!,
+                  //     onPressed: widget.onCancel,
+                  //     child: Text(widget.cancelText, style: const TextStyle(fontSize: 16)),
+                  //   ),
+                  // ),
                   const Spacer(),
                   IconButton(
                     padding: const EdgeInsets.all(0),
@@ -125,22 +125,26 @@ class _SelectionDialogState extends State<SelectionDialog> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 5),
-                      child: widget.favoriteElements.isEmpty
-                          ? const DecoratedBox(decoration: BoxDecoration())
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ...widget.favoriteElements.map(
-                                  (f) => SimpleDialogOption(
-                                    child: _buildOption(f),
-                                    onPressed: () {
-                                      _selectItem(f);
-                                    },
-                                  ),
-                                ),
-                                const Divider(),
-                              ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SimpleDialogOption(
+                            onPressed: widget.onCancel,
+                            child: _buildNoOption(),
+                          ),
+                          if (widget.favoriteElements.isNotEmpty) ...[
+                            ...widget.favoriteElements.map(
+                              (f) => SimpleDialogOption(
+                                child: _buildOption(f),
+                                onPressed: () {
+                                  _selectItem(f);
+                                },
+                              ),
                             ),
+                            const Divider(),
+                          ],
+                        ],
+                      ),
                     ),
                     if (filteredElements.isEmpty)
                       _buildEmptySearchWidget(context)
@@ -160,6 +164,33 @@ class _SelectionDialogState extends State<SelectionDialog> {
           ),
         ),
       );
+
+  Widget _buildNoOption() {
+    final text = CountryLocalizations.of(context)?.translate('no_selected') ?? 'No country code';
+
+    return SizedBox(
+      width: 400,
+      child: Flex(
+        direction: Axis.horizontal,
+        children: <Widget>[
+          if (widget.showFlag!)
+            Flexible(
+              child: Container(
+                margin: const EdgeInsets.only(right: 16.0),
+                decoration: widget.flagDecoration,
+                clipBehavior: widget.flagDecoration == null ? Clip.none : Clip.hardEdge,
+                child: Image.asset(
+                  'assets/no_selected.png',
+                  package: 'country_code_picker',
+                  width: widget.flagWidth,
+                ),
+              ),
+            ),
+          Expanded(flex: 4, child: Text(text, overflow: TextOverflow.fade, style: widget.textStyle)),
+        ],
+      ),
+    );
+  }
 
   Widget _buildOption(CountryCode e) {
     return SizedBox(

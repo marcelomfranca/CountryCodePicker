@@ -265,5 +265,6 @@
     "SX": "Sint Maarten (Dutch part)",
     "SS": "South Sudan",
     "XK": "Kosovo",
-    "no_country": "No country found"
+    "no_country": "No country found",
+    "no_selected": "No country code"
 }
